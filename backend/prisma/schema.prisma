@@ -1,0 +1,36 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ユーザーモデル
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  todos     Todo[] // Userが所有する複数のTodo
+}
+
+// Todoモデル
+model Todo {
+  id        Int       @id @default(autoincrement()) // ユニークID
+  title     String // Todoのタイトル
+  detail    String? // Todoの詳細（メモ）
+  completed Boolean   @default(false) // 完了フラグ
+  createdAt DateTime  @default(now()) // 作成日時
+  updatedAt DateTime  @updatedAt // 更新日時
+  dueDate   DateTime? // 期限
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id]) // Userとのリレーション
+}
