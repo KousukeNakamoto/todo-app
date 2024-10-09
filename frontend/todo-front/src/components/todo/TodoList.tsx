@@ -31,7 +31,12 @@ export const TodoList = () => {
       <ul className="space-y-4">
         {todos.length === 0 && <Skeleton className="h-[57.33px] w-[245px]" />}
         {todos.map((todo: Pick<Todo, "id">) => (
-          <TodoItem key={todo.id} todoId={todo.id} loader={todoLoader} />
+          <TodoItem
+            key={todo.id}
+            todoId={todo.id}
+            loader={todoLoader}
+            getTodos={getTodoIds}
+          />
         ))}
       </ul>
     </div>

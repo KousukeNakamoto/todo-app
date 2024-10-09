@@ -104,7 +104,7 @@ export const updateTodos = async (
   }
 };
 
-export const deleteTodos = async (id: Pick<Todo, "id">): Promise<Todo[]> => {
+export const deleteTodo = async (id: Pick<Todo, "id">): Promise<Todo[]> => {
   const token = localStorage.getItem("jwt");
   console.log(import.meta.env.VITE_API_URL);
 
@@ -123,10 +123,10 @@ export const deleteTodos = async (id: Pick<Todo, "id">): Promise<Todo[]> => {
     });
 
     const data: Todo[] = await res.json();
-    console.log("🚀 ~ updateTodos ~ data:", data);
+    console.log("🚀 ~ updateTodo ~ data:", data);
     return data;
   } catch (error) {
-    console.log("🚀 ~ updateTodos ~ error:", error);
+    console.log("🚀 ~ updateTodo ~ error:", error);
     throw error;
   }
 };
