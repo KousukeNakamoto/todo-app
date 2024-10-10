@@ -1,4 +1,4 @@
-import { Todo } from "@/types";
+import { Todo } from "../../../../../prisma/client/index";
 
 export const getTodos = async (): Promise<Pick<Todo, "id">[]> => {
   const token = localStorage.getItem("jwt");

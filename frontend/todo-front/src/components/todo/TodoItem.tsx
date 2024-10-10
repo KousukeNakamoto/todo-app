@@ -1,4 +1,4 @@
-import { Todo } from "@/types";
+import { Todo } from "../../../../../prisma/client/index";
 import { deleteTodo, updateTodos } from "@/utils/todo/todo";
 import DataLoader from "dataloader";
 import { useEffect, useRef, useState } from "react";
