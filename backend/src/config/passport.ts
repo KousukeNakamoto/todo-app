@@ -3,7 +3,7 @@ import {
   ExtractJwt,
   StrategyOptions,
 } from "passport-jwt";
-import { PrismaClient, User } from "@prisma/client";
+import { PrismaClient, User } from "../../../prisma/client";
 import passport from "passport";
 import dotenv from "dotenv";
 
