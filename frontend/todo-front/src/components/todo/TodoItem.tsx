@@ -1,4 +1,4 @@
-import { Todo } from "@/types";
+import { Todo } from "../../../../../prisma/client/index";
 import { deleteTodo, updateTodos } from "@/utils/todo/todo";
 import DataLoader from "dataloader";
 import { useEffect, useRef, useState } from "react";
@@ -30,7 +30,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
     await updateTodos(todo);
   };
 
-  if (!todo?.id) return <Skeleton className="h-[57.33px] w-[245px]" />;
+  if (!todo?.id) return null;
   return (
     <motion.div
       className="border rounded-md p-4"
@@ -38,7 +38,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
       initial={{ opacity: 0, scaleX: 0 }}
       animate={{ opacity: 1, scaleX: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
-      transition={{ stiffness: 300, damping: 20 }}
+      transition={{ stiffness: 300, damping: 20, duration: 0.5 }}
     >
       <motion.div
         className="flex space-x-4"

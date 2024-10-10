@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { prisma } from "../utils/prisma";
-import { Todo } from "@prisma/client";
+import { Todo } from "../../../prisma/client";
 import DataLoader from "dataloader";
 
 // express.Requestに拡張でuser型を追加

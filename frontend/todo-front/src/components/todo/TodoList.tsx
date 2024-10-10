@@ -1,4 +1,4 @@
-import { Todo } from "@/types";
+import { Todo } from "../../../../../prisma/client/index";
 import { Button } from "../ui/button";
 import { TodoItem } from "./TodoItem";
 import { useEffect, useState } from "react";
