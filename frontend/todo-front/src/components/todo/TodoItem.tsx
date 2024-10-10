@@ -4,6 +4,7 @@ import DataLoader from "dataloader";
 import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
+import { AnimatePresence, motion } from "framer-motion";
 
 type TodoItemType = {
   todoId: number;
@@ -31,8 +32,21 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
 
   if (!todo?.id) return <Skeleton className="h-[57.33px] w-[245px]" />;
   return (
-    <div className="border rounded-md p-4">
-      <div className="flex space-x-4">
+    <motion.div
+      className="border rounded-md p-4"
+      layout
+      initial={{ opacity: 0, scaleX: 0 }}
+      animate={{ opacity: 1, scaleX: 1 }}
+      exit={{ scale: 0.8, opacity: 0 }}
+      transition={{ stiffness: 300, damping: 20 }}
+    >
+      <motion.div
+        className="flex space-x-4"
+        layout
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.8, opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
         <input
           type="checkbox"
           checked={todo.completed}
@@ -42,7 +56,6 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
           }}
           className="cursor-pointer"
         />
-
         <input
           type="text"
           value={todo.title}
@@ -54,7 +67,6 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
           className="px-1 outline-neutral-950 rounded-md"
           placeholder="タスクを追加"
         />
-
         <div
           className="flex items-center justify-end cursor-pointer w-24"
           onClick={() => calender.current?.showPicker()}
@@ -63,12 +75,13 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
             ? `残り${dayjs(todo.dueDate).diff(dayjs(), "day")}日`
             : "期限なし"}
         </div>
-
         <input
           type="datetime-local"
           onChange={(e) => {
-            console.log(new Date(e.target.value).toISOString());
-            setTodo({ ...todo, dueDate: new Date(e.target.value) });
+            setTodo({
+              ...todo,
+              dueDate: new Date(e.target.value),
+            });
             handleTodoEdit({ ...todo, dueDate: new Date(e.target.value) });
           }}
           value={
@@ -80,21 +93,31 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
           ref={calender}
           className="w-0"
         />
-        <button onClick={() => setTrigger(!trigger)}>aaa</button>
-      </div>
-      {trigger && (
-        <div className="flex">
-          <textarea className="w-full" />
-          <button
-            onClick={() => {
-              deleteTodo(todo);
-              getTodos();
-            }}
+        <button onClick={() => setTrigger(!trigger)}>toggle</button>
+      </motion.div>
+
+      <AnimatePresence>
+        {trigger && (
+          <motion.div
+            className="flex"
+            layout
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
           >
-            del
-          </button>
-        </div>
-      )}
-    </div>
+            <textarea className="w-full" />
+            <button
+              onClick={() => {
+                deleteTodo(todo);
+                getTodos();
+              }}
+            >
+              del
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
