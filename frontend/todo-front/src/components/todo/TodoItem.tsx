@@ -69,7 +69,9 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
             if (todo.title === "") return;
             handleTodoEdit(todo);
           }}
-          className="px-1 outline-neutral-950 rounded-md"
+          className={`px-1 outline-neutral-950 rounded-md ${
+            todo.completed && "line-through"
+          }`}
           placeholder="タスクを追加"
         />
         <div
