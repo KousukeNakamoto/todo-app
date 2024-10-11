@@ -112,7 +112,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
             exit={{ opacity: 0, height: 0 }}
           >
             <textarea
-              className="w-full mt-4"
+              className="w-full h-[100px] mt-4 p-2 resize-none"
               value={todo.detail ? todo.detail : ""}
               placeholder="詳細を入力"
               onChange={(e) => setTodo({ ...todo, detail: e.target.value })}
