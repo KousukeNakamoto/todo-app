@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
+import React from "react";
 
 type TodoItemType = {
   todoId: number;
@@ -30,7 +31,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
     await updateTodos(todo);
   };
 
-  if (!todo?.id) return null;
+  if (!todo?.id) return <Skeleton />;
   return (
     <motion.div
       className="border rounded-md p-4"
@@ -38,7 +39,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
       initial={{ opacity: 0, scaleX: 0 }}
       animate={{ opacity: 1, scaleX: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
-      transition={{ stiffness: 300, damping: 20, duration: 0.5 }}
+      transition={{ stiffness: 300, damping: 20 }}
     >
       <motion.div
         className="flex space-x-4"
@@ -104,9 +105,8 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
           >
-            <textarea className="w-full" />
+            <textarea className="w-full mt-4" />
             <button
               onClick={() => {
                 deleteTodo(todo);
