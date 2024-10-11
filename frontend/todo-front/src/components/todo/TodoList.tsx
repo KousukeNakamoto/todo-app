@@ -4,7 +4,6 @@ import { TodoItem } from "./TodoItem";
 import { useEffect, useState } from "react";
 import { getTodoLoader } from "@/utils/dataloader/dataloader";
 import { createTodo, getTodos } from "@/utils/todo/todo";
-import { Skeleton } from "../ui/skeleton";
 import { AnimatePresence, motion } from "framer-motion";
 
 export const TodoList = () => {
@@ -31,7 +30,6 @@ export const TodoList = () => {
       </Button>
       <motion.ul className="space-y-4">
         <AnimatePresence mode="sync">
-          {/* {todos.length === 0 && <Skeleton className="h-[57.33px] w-[245px]" />} */}
           {todos.map((todo: Pick<Todo, "id">) => (
             <TodoItem
               key={todo.id}

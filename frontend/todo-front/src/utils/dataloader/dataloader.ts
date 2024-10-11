@@ -1,5 +1,5 @@
-import { Todo } from "@/types";
 import DataLoader from "dataloader";
+import { Todo } from "../../../../../prisma/client";
 
 export const getTodoLoader = () =>
   new DataLoader((keys: readonly number[]) => batchGetTodo(keys));
