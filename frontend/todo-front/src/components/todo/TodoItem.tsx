@@ -36,8 +36,13 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
     <motion.div
       className="border rounded-md p-4"
       layout
-      initial={{ opacity: 0, scaleX: 0 }}
-      animate={{ opacity: 1, scaleX: 1 }}
+      whileHover={{
+        boxShadow:
+          "0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)", // Tailwindのshadow-md相当
+        scale: 1.01, // 少し拡大する効果も追加
+      }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       exit={{ scale: 0.8, opacity: 0 }}
       transition={{ stiffness: 300, damping: 20 }}
     >
@@ -106,7 +111,16 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
           >
-            <textarea className="w-full mt-4" />
+            <textarea
+              className="w-full mt-4"
+              value={todo.detail ? todo.detail : ""}
+              placeholder="詳細を入力"
+              onChange={(e) => setTodo({ ...todo, detail: e.target.value })}
+              onBlur={() => {
+                if (todo.detail === "") return;
+                handleTodoEdit(todo);
+              }}
+            />
             <button
               onClick={() => {
                 deleteTodo(todo);

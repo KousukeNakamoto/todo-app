@@ -29,7 +29,7 @@ export const TodoList = () => {
       <Button variant={"outline"} onClick={handleCreateTodo}>
         タスク追加
       </Button>
-      <ul className="space-y-4">
+      <motion.ul className="space-y-4">
         <AnimatePresence mode="sync">
           {/* {todos.length === 0 && <Skeleton className="h-[57.33px] w-[245px]" />} */}
           {todos.map((todo: Pick<Todo, "id">) => (
@@ -41,7 +41,7 @@ export const TodoList = () => {
             />
           ))}
         </AnimatePresence>
-      </ul>
+      </motion.ul>
     </div>
   );
 };
