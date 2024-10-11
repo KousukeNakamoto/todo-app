@@ -39,7 +39,6 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
       whileHover={{
         boxShadow:
           "0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)", // Tailwindのshadow-md相当
-        scale: 1.01, // 少し拡大する効果も追加
       }}
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
