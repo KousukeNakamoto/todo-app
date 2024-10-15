@@ -39,9 +39,9 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
         boxShadow:
           "0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06)", // Tailwindのshadow-md相当
       }}
-      initial={{ opacity: 0, x: -200 }}
-      animate={{ opacity: 1, x: [-100, 200, -500, 0] }}
-      exit={{ scale: 1, opacity: 0, x: -200 }}
+      initial={{ opacity: 0, z: -200 }}
+      animate={{ opacity: 1, z: 0 }}
+      exit={{ scale: 1, opacity: 0, z: -200 }}
       transition={{ stiffness: 300, damping: 20 }}
     >
       <motion.div
