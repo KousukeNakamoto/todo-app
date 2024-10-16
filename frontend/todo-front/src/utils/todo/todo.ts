@@ -1,6 +1,6 @@
 import { Todo } from "../../../../../prisma/client/index";
 
-export const getTodos = async (): Promise<Pick<Todo, "id">[]> => {
+export const getTodos = async (filter: string): Promise<Pick<Todo, "id">[]> => {
   const token = localStorage.getItem("jwt");
   console.log(import.meta.env.VITE_API_URL);
 
@@ -8,14 +8,17 @@ export const getTodos = async (): Promise<Pick<Todo, "id">[]> => {
     throw new Error("JWT token not found");
   }
   try {
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/todo`, {
-      method: "GET",
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
+    const res = await fetch(
+      `${import.meta.env.VITE_API_URL}/todos/completed=${filter}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
 
-    const data: Pick<Todo, "id">[] = await res.json();
+    const data: Pick<Todo, "id" | "completed">[] = await res.json();
     console.log("🚀 ~ getTodos ~ data:", data);
     return data;
   } catch (error) {
@@ -46,34 +49,32 @@ export const getTodo = async (id: number): Promise<Todo> => {
   }
 };
 
-export const createTodo =
-  async (): // todo: Pick<Todo, "title" | "detail" | "dueDate">
-  Promise<Todo> => {
-    const token = localStorage.getItem("jwt");
-    console.log(import.meta.env.VITE_API_URL);
+export const createTodo = async (): Promise<Todo> => {
+  const token = localStorage.getItem("jwt");
+  console.log(import.meta.env.VITE_API_URL);
 
-    if (!token) {
-      throw new Error("JWT token not found");
-    }
+  if (!token) {
+    throw new Error("JWT token not found");
+  }
 
-    try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/todo`, {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title: "", detail: "", dueDate: null }),
-      });
+  try {
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/todo`, {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title: "", detail: "", dueDate: null }),
+    });
 
-      const data: Todo = await res.json();
-      console.log("🚀 ~ createTodo ~ data:", data);
-      return data;
-    } catch (error) {
-      console.log("🚀 ~ createTodo ~ error:", error);
-      throw error;
-    }
-  };
+    const data: Todo = await res.json();
+    console.log("🚀 ~ createTodo ~ data:", data);
+    return data;
+  } catch (error) {
+    console.log("🚀 ~ createTodo ~ error:", error);
+    throw error;
+  }
+};
 
 export const updateTodos = async (
   todo: Pick<Todo, "title" | "detail" | "dueDate" | "completed">
