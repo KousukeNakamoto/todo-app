@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/todo", authenticateJWT, createTodo);
 router.put("/todo", authenticateJWT, updateTodo);
-router.get("/todo", authenticateJWT, readTodoIds);
+router.get("/todos/:completed", authenticateJWT, readTodoIds);
 router.get("/todo/:id", authenticateJWT, readTodo);
 router.delete("/todo", authenticateJWT, deleteTodo);
 

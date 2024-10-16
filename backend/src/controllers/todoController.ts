@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import { prisma } from "../utils/prisma";
-import { Todo } from "../../../prisma/client";
-import DataLoader from "dataloader";
 
 // express.Requestに拡張でuser型を追加
 //https://zenn.dev/sc30gsw/articles/qiita-20230226-ef8afa2a0c5c4f288223
@@ -11,11 +9,6 @@ declare global {
       id: number;
       email: string;
       createdAt: Date;
-    }
-    interface Request {
-      loaders: {
-        todoLoader: DataLoader<number, Todo | null, number>;
-      };
     }
   }
 }
@@ -72,6 +65,7 @@ export const readTodo = async (req: Request, res: Response) => {
     return res.status(401).json({ error: "Unauthorized user" });
   }
   console.log("todoController, params:", req.params.id);
+  console.log("todoController, params:", req.url);
   const ids = req.params.id
     .split("&")
     .map((part) => Number(part.split("=")[1]));
@@ -113,9 +107,19 @@ export const readTodoIds = async (req: Request, res: Response) => {
     return res.status(401).json({ error: "Unauthorized user" });
   }
 
+  const completedParam = req.params.completed
+    ? req.params.completed.split("=")[1]
+    : null;
+
+  const whereClause = {
+    userId: req.user.id,
+    ...(completedParam === "completed" && { completed: true }),
+    ...(completedParam === "unCompleted" && { completed: false }),
+  };
+
   try {
     const todos = await prisma.todo.findMany({
-      where: { userId: req.user.id },
+      where: whereClause,
       select: {
         id: true,
       }, // ユーザーIDを使って安全に更新
