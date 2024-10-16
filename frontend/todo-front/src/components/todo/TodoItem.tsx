@@ -6,6 +6,8 @@ import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoReload } from "react-icons/io5";
+import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
 
 type TodoItemType = {
   todoId: number;
@@ -111,7 +113,13 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
           ref={calender}
           className="w-0"
         />
-        <button onClick={() => setTrigger(!trigger)}>toggle</button>
+        <motion.button
+          onClick={() => setTrigger(!trigger)}
+          animate={{ rotate: trigger ? -90 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <MdOutlineKeyboardArrowLeft size={24} />
+        </motion.button>
       </motion.div>
       {error && (
         <div className="flex space-x-2 mt-2 items-center">
@@ -145,14 +153,15 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
                 handleTodoEdit(todo);
               }}
             />
-            <button
+            <motion.button
               onClick={() => {
                 deleteTodo(todo);
                 getTodos();
               }}
+              // className="hover:text-red-500 duration-100"
             >
-              del
-            </button>
+              <MdDeleteForever size={24} />
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>

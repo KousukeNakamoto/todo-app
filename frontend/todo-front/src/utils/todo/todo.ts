@@ -121,12 +121,14 @@ export const updateTodos = async (
       if (error.message === "JWT token not found") {
         console.error("JWT Token Error:", error.message);
         // ログインページに遷移するなどの処理
+        return { error: error.message };
       } else if (error.name === "HTTPError") {
         console.error("HTTP Error:", error.message);
         // ステータスコードに応じた処理
         return { error: error.message };
       } else {
         console.error("Unknown error:", error.message);
+        return { error: error.message };
       }
     }
     throw error;
