@@ -5,29 +5,41 @@ import { useEffect, useRef, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
+import { IoReload } from "react-icons/io5";
 
 type TodoItemType = {
   todoId: number;
-  loader: DataLoader<number, Todo | undefined, number>;
+  loader: DataLoader<number, Todo | null | undefined, number>;
   getTodos: () => Promise<void>;
 };
 
 export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
   const [todo, setTodo] = useState<Todo>();
+  const [error, setError] = useState<string>();
   const [trigger, setTrigger] = useState(false);
   const calender = useRef<HTMLInputElement | null>(null);
+  let prevTitle: string = "";
 
   useEffect(() => {
     (async () => {
       const data = await loader.load(todoId);
-      console.log(dayjs(data?.dueDate).format("YYYY-MM-DDThh:mm"));
-
-      setTodo(data);
+      if (data) {
+        setError(undefined);
+        setTodo(data);
+        prevTitle = data.title;
+        console.log(dayjs(data?.dueDate).format("YYYY-MM-DDThh:mm"));
+      }
     })();
   }, []);
 
   const handleTodoEdit = async (todo: Todo) => {
-    await updateTodos(todo);
+    setError(undefined);
+
+    const { error } = await updateTodos(todo);
+
+    if (error) {
+      setError(error);
+    }
   };
 
   if (!todo?.id) return <Skeleton />;
@@ -65,7 +77,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
           value={todo.title}
           onChange={(e) => setTodo({ ...todo, title: e.target.value })}
           onBlur={() => {
-            if (todo.title === "") return;
+            if (todo.title === "" || prevTitle === todo.title) return;
             handleTodoEdit(todo);
           }}
           className={`px-1 outline-neutral-950 rounded-md ${
@@ -101,6 +113,18 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
         />
         <button onClick={() => setTrigger(!trigger)}>toggle</button>
       </motion.div>
+      {error && (
+        <div className="flex space-x-2 mt-2 items-center">
+          <p className=" text-red-600 text-xs">
+            データベースに同期されていません
+          </p>
+          <IoReload
+            onClick={() => handleTodoEdit(todo)}
+            size={12}
+            className="hover:scale-110 duration-300"
+          />
+        </div>
+      )}
 
       <AnimatePresence>
         {trigger && (

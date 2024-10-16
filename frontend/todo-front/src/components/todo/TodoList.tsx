@@ -37,7 +37,7 @@ export const TodoList = () => {
       <div className="flex items-end space-x-4">
         <Select onValueChange={setFilter}>
           <SelectTrigger className="font-medium text-sm mx-1">
-            <SelectValue placeholder="フィルター" />
+            <SelectValue placeholder="フィルター" defaultValue={"all"} />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">全て</SelectItem>

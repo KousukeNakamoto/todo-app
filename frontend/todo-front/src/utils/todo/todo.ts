@@ -17,6 +17,9 @@ export const getTodos = async (filter: string): Promise<Pick<Todo, "id">[]> => {
         },
       }
     );
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
 
     const data: Pick<Todo, "id" | "completed">[] = await res.json();
     console.log("🚀 ~ getTodos ~ data:", data);
@@ -39,6 +42,9 @@ export const getTodo = async (id: number): Promise<Todo> => {
         Authorization: "Bearer " + token,
       },
     });
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
 
     const data: Todo = await res.json();
     console.log("🚀 ~ getTodo ~ data:", data);
@@ -66,6 +72,9 @@ export const createTodo = async (): Promise<Todo> => {
       },
       body: JSON.stringify({ title: "", detail: "", dueDate: null }),
     });
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
 
     const data: Todo = await res.json();
     console.log("🚀 ~ createTodo ~ data:", data);
@@ -78,7 +87,7 @@ export const createTodo = async (): Promise<Todo> => {
 
 export const updateTodos = async (
   todo: Pick<Todo, "title" | "detail" | "dueDate" | "completed">
-): Promise<Todo> => {
+): Promise<{ data?: Todo; error?: string }> => {
   const token = localStorage.getItem("jwt");
   console.log(import.meta.env.VITE_API_URL);
 
@@ -96,11 +105,30 @@ export const updateTodos = async (
       body: JSON.stringify(todo),
     });
 
+    if (!res.ok) {
+      // レスポンスがエラーの時の処理
+      const error = new Error(`HTTP error! Status: ${res.status}`);
+      error.name = "HTTPError";
+      throw error;
+    }
+
     const data: Todo = await res.json();
     console.log("🚀 ~ updateTodos ~ data:", data);
-    return data;
+    return { data };
   } catch (error) {
     console.log("🚀 ~ updateTodos ~ error:", error);
+    if (error instanceof Error) {
+      if (error.message === "JWT token not found") {
+        console.error("JWT Token Error:", error.message);
+        // ログインページに遷移するなどの処理
+      } else if (error.name === "HTTPError") {
+        console.error("HTTP Error:", error.message);
+        // ステータスコードに応じた処理
+        return { error: error.message };
+      } else {
+        console.error("Unknown error:", error.message);
+      }
+    }
     throw error;
   }
 };
@@ -122,6 +150,9 @@ export const deleteTodo = async (id: Pick<Todo, "id">): Promise<Todo[]> => {
       },
       body: JSON.stringify(id),
     });
+    if (!res.ok) {
+      throw new Error(`HTTP error! Status: ${res.status}`);
+    }
 
     const data: Todo[] = await res.json();
     console.log("🚀 ~ updateTodo ~ data:", data);
