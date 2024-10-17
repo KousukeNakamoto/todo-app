@@ -21,6 +21,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
   const [error, setError] = useState<string>();
   const [trigger, setTrigger] = useState(false);
   let prevTitle: string = "";
+  let prevDetail: string | null = "";
 
   useEffect(() => {
     (async () => {
@@ -29,6 +30,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
         setError(undefined);
         setTodo(data);
         prevTitle = data.title;
+        prevDetail = data.detail;
         console.log(dayjs(data?.dueDate).format("YYYY-MM-DDThh:mm"));
       }
     })();
@@ -122,7 +124,6 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            // transition={{ duration: 4 }}
           >
             <motion.textarea
               className="w-full h-[100px] mt-4 p-2 resize-none hover:bg-accent hover:text-accent-foreground transition-colors rounded-md overflow-hidden"
@@ -130,7 +131,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
               placeholder="詳細を入力"
               onChange={(e) => setTodo({ ...todo, detail: e.target.value })}
               onBlur={() => {
-                if (todo.detail === "") return;
+                if (todo.detail === "" || todo.detail === prevDetail) return;
                 handleTodoEdit(todo);
               }}
             />
