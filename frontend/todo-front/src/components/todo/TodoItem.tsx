@@ -1,13 +1,14 @@
 import { Todo } from "../../../../../prisma/client/index";
 import { deleteTodo, updateTodos } from "@/utils/todo/todo";
 import DataLoader from "dataloader";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 import dayjs from "dayjs";
 import { AnimatePresence, motion } from "framer-motion";
 import { IoReload } from "react-icons/io5";
 import { MdOutlineKeyboardArrowLeft } from "react-icons/md";
 import { MdDeleteForever } from "react-icons/md";
+import { CalendarInput } from "./utils/CalendarInput";
 
 type TodoItemType = {
   todoId: number;
@@ -19,7 +20,6 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
   const [todo, setTodo] = useState<Todo>();
   const [error, setError] = useState<string>();
   const [trigger, setTrigger] = useState(false);
-  const calender = useRef<HTMLInputElement | null>(null);
   let prevTitle: string = "";
 
   useEffect(() => {
@@ -47,7 +47,7 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
   if (!todo?.id) return <Skeleton />;
   return (
     <motion.div
-      className="border rounded-md p-4"
+      className="border rounded-md p-3"
       layout
       whileHover={{
         boxShadow:
@@ -82,41 +82,21 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
             if (todo.title === "" || prevTitle === todo.title) return;
             handleTodoEdit(todo);
           }}
-          className={`px-1 outline-neutral-950 rounded-md ${
+          className={`px-1 outline-neutral-950 rounded-md hover:bg-accent hover:text-accent-foreground transition-colors ${
             todo.completed && "line-through"
           }`}
           placeholder="タスクを追加"
         />
-        <div
-          className="flex items-center justify-end cursor-pointer w-24"
-          onClick={() => calender.current?.showPicker()}
-        >
-          {todo.dueDate
-            ? `残り${dayjs(todo.dueDate).diff(dayjs(), "day")}日`
-            : "期限なし"}
-        </div>
-        <input
-          type="datetime-local"
-          onChange={(e) => {
-            setTodo({
-              ...todo,
-              dueDate: new Date(e.target.value),
-            });
-            handleTodoEdit({ ...todo, dueDate: new Date(e.target.value) });
-          }}
-          value={
-            todo.dueDate !== null
-              ? dayjs(todo?.dueDate).format("YYYY-MM-DDThh:mm")
-              : ""
-          }
-          min={dayjs(new Date()).format("YYYY-MM-DDThh:mm")}
-          ref={calender}
-          className="w-0"
+        <CalendarInput
+          setTodo={setTodo}
+          todo={todo}
+          handleTodoEdit={handleTodoEdit}
         />
         <motion.button
           onClick={() => setTrigger(!trigger)}
           animate={{ rotate: trigger ? -90 : 0 }}
           transition={{ duration: 0.3 }}
+          className="hover:bg-accent hover:text-accent-foreground transition-colors rounded-md w-8 flex justify-center items-center"
         >
           <MdOutlineKeyboardArrowLeft size={24} />
         </motion.button>
@@ -137,14 +117,15 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
       <AnimatePresence>
         {trigger && (
           <motion.div
-            className="flex"
+            className="flex flex-col items-end space-y-2"
             layout
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
+            // transition={{ duration: 4 }}
           >
-            <textarea
-              className="w-full h-[100px] mt-4 p-2 resize-none"
+            <motion.textarea
+              className="w-full h-[100px] mt-4 p-2 resize-none hover:bg-accent hover:text-accent-foreground transition-colors rounded-md overflow-hidden"
               value={todo.detail ? todo.detail : ""}
               placeholder="詳細を入力"
               onChange={(e) => setTodo({ ...todo, detail: e.target.value })}
@@ -154,11 +135,12 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
               }}
             />
             <motion.button
+              exit={{ opacity: 0, height: 0 }}
               onClick={() => {
                 deleteTodo(todo);
                 getTodos();
               }}
-              // className="hover:text-red-500 duration-100"
+              className="hover:text-red-500 hover:text-accent-foreground transition-colors"
             >
               <MdDeleteForever size={24} />
             </motion.button>
