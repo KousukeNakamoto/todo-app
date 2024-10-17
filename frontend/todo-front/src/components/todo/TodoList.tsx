@@ -1,7 +1,7 @@
 import { Todo } from "../../../../../prisma/client/index";
 import { Button } from "../ui/button";
 import { TodoItem } from "./TodoItem";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getTodoLoader } from "@/utils/dataloader/dataloader";
 import { createTodo, getTodos } from "@/utils/todo/todo";
 import { AnimatePresence, motion } from "framer-motion";
@@ -18,14 +18,14 @@ export const TodoList = () => {
   const [filter, setFilter] = useState("all");
   const todoLoader = getTodoLoader();
 
-  const getTodoIds = async () => {
+  const getTodoIds = useCallback(async () => {
     const data: Pick<Todo, "id">[] = await getTodos(filter);
     setTodos(data);
-  };
+  }, [filter]);
 
   useEffect(() => {
     getTodoIds();
-  }, [filter]);
+  }, [getTodoIds]);
 
   const handleCreateTodo = async () => {
     await createTodo();

@@ -34,6 +34,7 @@ export const useAuthCheck = () => {
         }
       } catch (error) {
         // 通信エラーなどで認証できない場合
+        console.log(error);
         navigate("/login");
       }
     };
