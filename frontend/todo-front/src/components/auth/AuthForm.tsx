@@ -15,7 +15,9 @@ export const AuthForm = ({ onSubmit, buttonText }: AuthFormProps) => {
     event.preventDefault();
     try {
       await onSubmit(email, password); // 親コンポーネントに渡されたonSubmitを呼ぶ
-    } catch (err) {
+    } catch (error) {
+      console.log(error);
+
       setError("サーバーとの通信に失敗しました。");
     }
   };
