@@ -16,13 +16,12 @@ type TodoItemType = {
   getTodos: () => Promise<void>;
 };
 
-let prevTitle: string = "";
-let prevDetail: string | null = "";
-
 export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
   const [todo, setTodo] = useState<Todo>();
   const [error, setError] = useState<string>();
   const [trigger, setTrigger] = useState(false);
+  const prevTitle = todo?.title;
+  const prevDetail = todo?.detail;
 
   useEffect(() => {
     (async () => {
@@ -30,8 +29,6 @@ export const TodoItem = ({ todoId, loader, getTodos }: TodoItemType) => {
       if (data) {
         setError(undefined);
         setTodo(data);
-        prevTitle = data.title;
-        prevDetail = data.detail;
         console.log(dayjs(data?.dueDate).format("YYYY-MM-DDThh:mm"));
       }
     })();
