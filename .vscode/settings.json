@@ -1,8 +1,6 @@
 {
-    "cSpell.words": [
-        "todos"
-    ],
-    "files.associations": {
+  "cSpell.words": ["hookform", "todos"],
+  "files.associations": {
     "*.css": "tailwindcss"
   },
   "editor.defaultFormatter": "esbenp.prettier-vscode"
