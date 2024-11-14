@@ -31,14 +31,14 @@ export const login = async (req: Request, res: Response) => {
     const user = await prisma.user.findUnique({ where: { email } });
 
     if (!user) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "ユーザーが見つかりません" });
     }
 
     // パスワードの検証
     const isValidPassword = await bcrypt.compare(password, user.password);
 
     if (!isValidPassword) {
-      return res.status(401).json({ message: "Invalid credentials" });
+      return res.status(401).json({ message: "パスワードが違います" });
     }
 
     // JWTトークンを生成
