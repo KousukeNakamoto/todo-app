@@ -19,19 +19,23 @@ type FormValue = z.infer<typeof schema>;
 
 export const AuthForm = ({ onSubmit, buttonText }: AuthFormProps) => {
   const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const {
     register,
     handleSubmit,
-    formState: { errors, isLoading },
+    formState: { errors },
   } = useForm<FormValue>({ resolver: zodResolver(schema), mode: "onBlur" });
 
   const errorHandle = async ({ email, password }: FormValue) => {
     try {
       setError(false);
+      setIsLoading(true);
       await onSubmit({ email, password }); // 親コンポーネントに渡されたonSubmitを呼ぶ
     } catch (error) {
       console.log(error);
       setError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
