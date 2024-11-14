@@ -1,61 +1,72 @@
-import React, { useState } from "react";
 import { Button } from "../ui/button";
+import { useForm } from "react-hook-form";
+import { formData } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useState } from "react";
 
 interface AuthFormProps {
-  onSubmit: (email: string, password: string) => Promise<void>;
+  onSubmit: (formData: formData) => Promise<void>;
   buttonText: string;
 }
 
-export const AuthForm = ({ onSubmit, buttonText }: AuthFormProps) => {
-  const [email, setEmail] = useState("sample@gmail.com");
-  const [password, setPassword] = useState("123456789");
-  const [error, setError] = useState("");
+const schema = z.object({
+  email: z.string().email("正しいメールアドレスを入力してください"),
+  password: z.string().min(3),
+});
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+type FormValue = z.infer<typeof schema>;
+
+export const AuthForm = ({ onSubmit, buttonText }: AuthFormProps) => {
+  const [error, setError] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValue>({ resolver: zodResolver(schema), mode: "onBlur" });
+
+  const errorHandle = async ({ email, password }: FormValue) => {
     try {
-      await onSubmit(email, password); // 親コンポーネントに渡されたonSubmitを呼ぶ
+      setError(false);
+      setIsLoading(true);
+      await onSubmit({ email, password }); // 親コンポーネントに渡されたonSubmitを呼ぶ
     } catch (error) {
       console.log(error);
-
-      setError("サーバーとの通信に失敗しました。");
+      setError(true);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="p-8 rounded-md shadow-md ">
-      {error && <p style={{ color: "red" }}>{error}</p>}
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(errorHandle)}
         className="space-y-4 flex flex-col items-end"
       >
         <div>
           <div>
             <label>Email</label>
           </div>
-          <input
-            className="border rounded-md"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <input className="border rounded-md" {...register("email")} />
+          {errors.email && (
+            <p className="text-red-600">{errors.email.message}</p>
+          )}
         </div>
         <div>
           <div>
             <label>Password</label>
           </div>
-          <input
-            className="border rounded-md"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <input className="border rounded-md" {...register("password")} />
+          {errors.password && (
+            <p className="text-red-600">{errors.password.message}</p>
+          )}
         </div>
-        <Button type="submit" variant={"login"}>
+        <Button type="submit" variant={"login"} disabled={isLoading}>
           {buttonText}
         </Button>
+        {error && <p className="text-red-600">error</p>}
       </form>
     </div>
   );
